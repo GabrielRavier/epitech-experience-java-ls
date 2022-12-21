@@ -1,2 +1,5 @@
 # Files produced by maven
 /ls/target/
+/ls/.classpath
+/ls/.project
+/ls/.settings/
