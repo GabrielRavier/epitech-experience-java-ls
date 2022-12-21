@@ -16,7 +16,7 @@ public class ErrorManager {
 	public static void printFileError(boolean isSerious, String message, String fileName)
 	{
 		System.out.flush();
-		System.err.print(System.getProperty("sun.java.command"));
+		System.err.print("ls");
 		System.err.print(": ");
 		System.err.printf(message, fileName);
 		System.err.println();

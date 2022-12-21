@@ -4,6 +4,12 @@ public class DirectoryPrinter {
 	public static boolean printNames = true;
 	private static boolean isFirstDirectory = true;
 	
+	private static void prepareOnePath(String containingDirectoryName, String nextPathString)
+	{
+		if (!FileIgnoreManager.isIgnored(nextPathString))
+			CurrentDirectoryFilesManager.addFile(nextPathString, false, containingDirectoryName);
+	}
+	
 	public static void print(String name, boolean isCommandLineArgument)
 	{
 		java.nio.file.DirectoryStream<java.nio.file.Path> directory;
@@ -23,13 +29,11 @@ public class DirectoryPrinter {
 			System.out.print(name);
 			System.out.println(":");
 		}
-		
-		for (var nextPath : directory) {
-			String nextPathString = nextPath.getFileName().toString();
-			if (!FileIgnoreManager.isIgnored(nextPathString)) {
-				CurrentDirectoryFilesManager.addFile(nextPathString, false, name);
-			}
-		}
+
+		DirectoryPrinter.prepareOnePath(name, ".");
+		DirectoryPrinter.prepareOnePath(name, "..");
+		for (var nextPath : directory)
+			DirectoryPrinter.prepareOnePath(name, nextPath.getFileName().toString());
 		
 		try {
 			directory.close();

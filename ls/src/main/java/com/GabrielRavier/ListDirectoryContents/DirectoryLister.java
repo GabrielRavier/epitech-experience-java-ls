@@ -22,11 +22,11 @@ public class DirectoryLister {
 	
 	public static void execute(String[] args)
 	{
-		int i = 0;
+		int i = ArgumentsParser.parse(args);
 
 		CurrentDirectoryFilesManager.clear();
 		
-		int numFiles = args.length;
+		int numFiles = args.length - i;
 
 		if (numFiles <= 0)
 			PendingDirectoryManager.queue(".", true);
