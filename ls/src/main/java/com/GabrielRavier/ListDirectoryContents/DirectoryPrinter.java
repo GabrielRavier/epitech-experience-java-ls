@@ -2,6 +2,7 @@ package com.GabrielRavier.ListDirectoryContents;
 
 public class DirectoryPrinter {
 	public static boolean printNames = true;
+	private static boolean isFirstDirectory = true;
 	
 	public static void print(String name, boolean isCommandLineArgument)
 	{
@@ -9,12 +10,18 @@ public class DirectoryPrinter {
 		try {
 			directory = java.nio.file.Files.newDirectoryStream(java.nio.file.Paths.get(name));
 		} catch (java.io.IOException exception) {
-			ErrorManager.printFileError(exception, isCommandLineArgument, "cannot open directory %s", name);
+			ErrorManager.printFileError(isCommandLineArgument, "cannot open directory %s", name);
 			return;
 		}
 		
+		CurrentDirectoryFilesManager.clear();
+		
 		if (DirectoryPrinter.printNames) {
-			System.err.println("TODO: printNames");
+			if (!DirectoryPrinter.isFirstDirectory)
+				System.out.println();
+			DirectoryPrinter.isFirstDirectory = false;
+			System.out.print(name);
+			System.out.println(":");
 		}
 		
 		for (var nextPath : directory) {
@@ -27,12 +34,12 @@ public class DirectoryPrinter {
 		try {
 			directory.close();
 		} catch (java.io.IOException exception) {
-			ErrorManager.printFileError(exception, isCommandLineArgument, "closing directory %s", name);
+			ErrorManager.printFileError(isCommandLineArgument, "closing directory %s", name);
 		}
 		
 		CurrentDirectoryFilesManager.sort();
 		
-		if (CurrentDirectoryFilesManager.isNonEmpty())
+		if (CurrentDirectoryFilesManager.fileCount != 0)
 			CurrentDirectoryFilesManager.print();
 	}
 }

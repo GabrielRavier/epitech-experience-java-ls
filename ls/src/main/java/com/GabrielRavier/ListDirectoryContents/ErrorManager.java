@@ -13,14 +13,13 @@ public class ErrorManager {
 			ErrorManager.exitStatus = ErrorManager.exitStatusMinorProblem;
 	}
 	
-	public static void printFileError(Exception error, boolean isSerious, String message, String fileName)
+	public static void printFileError(boolean isSerious, String message, String fileName)
 	{
 		System.out.flush();
 		System.err.print(System.getProperty("sun.java.command"));
 		System.err.print(": ");
 		System.err.printf(message, fileName);
-		System.err.print(": ");
-		System.err.print(error.getMessage());
+		System.err.println();
 		ErrorManager.setExitStatus(isSerious);
 	}
 }

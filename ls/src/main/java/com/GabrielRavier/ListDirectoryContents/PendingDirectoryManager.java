@@ -9,9 +9,9 @@ public class PendingDirectoryManager {
 		PendingDirectoryManager.pending.add(new PendingDirectory(name, isCommandLineArgument));
 	}
 	
-	public static boolean isNonEmpty()
+	public static int entryCount()
 	{
-		return PendingDirectoryManager.pending.size() != 0;
+		return PendingDirectoryManager.pending.size();
 	}
 	
 	public static PendingDirectory getNext()
