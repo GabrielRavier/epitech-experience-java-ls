@@ -3,11 +3,29 @@ package com.GabrielRavier.ListDirectoryContents;
 public class ArgumentsParser {
 	
 	enum IgnoreMode {
-		normal,
-		minimal,
+		NORMAL,
+		MINIMAL,
 	};
 	
-	static IgnoreMode ignoreMode = IgnoreMode.normal;
+	static IgnoreMode ignoreMode = IgnoreMode.NORMAL;
+	
+	enum FormatMode {
+		UNKNOWN,
+		ONE_PER_LINE,
+		LONG,
+	};
+	
+	static FormatMode formatMode = FormatMode.LONG;
+	
+	enum DeferenceSymlinkMode {
+		UNKNOWN,
+		NEVER,
+		COMMAND_LINE_SYMLINK_TO_DIR,
+	}
+	
+	static DeferenceSymlinkMode dereferenceSymlinkMode = DeferenceSymlinkMode.UNKNOWN;
+	
+	static boolean formatNeedsStat = false;
 	
 	private static void printUsageAndExit(int exitStatus)
 	{
@@ -20,6 +38,7 @@ public class ArgumentsParser {
 			System.out.println();
 			System.out.println("Mandatory options to long options are mandatory for short options too.");
 			System.out.println("  -a, --all                  do not ignore entries starting with .");
+			System.out.println("  -l                         use a long listing format");
 			System.out.println();
 			System.out.println("Exit status:");
 			System.out.println(" 0  if OK,");
@@ -34,7 +53,8 @@ public class ArgumentsParser {
 		var longOptions = new gnu.getopt.LongOpt[1];
 		longOptions[0] = new gnu.getopt.LongOpt("all", gnu.getopt.LongOpt.NO_ARGUMENT, null, 'a');
 		
-		var getOptHandler = new gnu.getopt.Getopt("ls", args, "a", longOptions);
+		var getOptHandler = new gnu.getopt.Getopt("ls", args, "al", longOptions);
+		var formatOption = ArgumentsParser.FormatMode.UNKNOWN;
 		
 		while (true) {
 			int c = getOptHandler.getopt();
@@ -44,13 +64,20 @@ public class ArgumentsParser {
 			
 			switch (c) {
 			case 'a':
-				ArgumentsParser.ignoreMode = IgnoreMode.minimal;
+				ArgumentsParser.ignoreMode = IgnoreMode.MINIMAL;
 				break;
+				
+			case 'l':
+				formatOption = FormatMode.LONG;
+				break;
+				
 			default:
 				printUsageAndExit(ErrorManager.exitStatusFailure);
 			}
 		}
 		
+		ArgumentsParser.formatMode = formatOption != ArgumentsParser.FormatMode.UNKNOWN ? formatOption : ArgumentsParser.FormatMode.ONE_PER_LINE;
+
 		return getOptHandler.getOptind();
 	}
 }

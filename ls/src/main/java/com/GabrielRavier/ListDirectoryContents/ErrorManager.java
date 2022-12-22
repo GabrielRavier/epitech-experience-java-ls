@@ -18,7 +18,7 @@ public class ErrorManager {
 		System.out.flush();
 		System.err.print("ls");
 		System.err.print(": ");
-		System.err.printf(message, fileName);
+		System.err.printf(message, "'" + fileName + "'");
 		System.err.println();
 		ErrorManager.setExitStatus(isSerious);
 	}

@@ -4,10 +4,13 @@ public class DirectoryPrinter {
 	public static boolean printNames = true;
 	private static boolean isFirstDirectory = true;
 	
-	private static void prepareOnePath(String containingDirectoryName, String nextPathString)
+	private static long prepareOnePath(String containingDirectoryName, String nextPathString)
 	{
+		long blocks = 0;
+		
 		if (!FileIgnoreManager.isIgnored(nextPathString))
-			CurrentDirectoryFilesManager.addFile(nextPathString, false, containingDirectoryName);
+			blocks = CurrentDirectoryFilesManager.addFile(nextPathString, false, containingDirectoryName);
+		return blocks;
 	}
 	
 	public static void print(String name, boolean isCommandLineArgument)
@@ -30,10 +33,11 @@ public class DirectoryPrinter {
 			System.out.println(":");
 		}
 
-		DirectoryPrinter.prepareOnePath(name, ".");
-		DirectoryPrinter.prepareOnePath(name, "..");
+		long totalBlocks = 0;
+		totalBlocks += DirectoryPrinter.prepareOnePath(name, ".");
+		totalBlocks += DirectoryPrinter.prepareOnePath(name, "..");
 		for (var nextPath : directory)
-			DirectoryPrinter.prepareOnePath(name, nextPath.getFileName().toString());
+			totalBlocks += DirectoryPrinter.prepareOnePath(name, nextPath.getFileName().toString());
 		
 		try {
 			directory.close();
@@ -42,6 +46,11 @@ public class DirectoryPrinter {
 		}
 		
 		CurrentDirectoryFilesManager.sort();
+		
+		if (ArgumentsParser.formatMode == ArgumentsParser.FormatMode.LONG) {
+			var output = BlockSizeManager.makeHumanReadableString(totalBlocks, 512, 1024);
+			System.out.print("total " + output + '\n');
+		}
 		
 		if (CurrentDirectoryFilesManager.fileCount != 0)
 			CurrentDirectoryFilesManager.print();

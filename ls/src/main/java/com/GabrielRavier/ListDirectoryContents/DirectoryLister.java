@@ -12,7 +12,7 @@ public class DirectoryLister {
 		}
 		for (int i = 0; i < CurrentDirectoryFilesManager.sortedElementIndexes.size(); ++i) {
 			var fileInfo = CurrentDirectoryFilesManager.elements.get(CurrentDirectoryFilesManager.sortedElementIndexes.get(i));
-			if (fileInfo.type == FileInformation.Type.commandLineArgumentDirectory) {
+			if (fileInfo.type == FileInformation.Type.COMMAND_LINE_ARGUMENT_DIRECTORY) {
 				CurrentDirectoryFilesManager.sortedElementIndexes.remove(i);
 				--i;
 			}
@@ -23,6 +23,14 @@ public class DirectoryLister {
 	public static void execute(String[] args)
 	{
 		int i = ArgumentsParser.parse(args);
+		
+		if (ArgumentsParser.dereferenceSymlinkMode == ArgumentsParser.DeferenceSymlinkMode.UNKNOWN)
+			ArgumentsParser.dereferenceSymlinkMode = 
+				ArgumentsParser.formatMode == ArgumentsParser.FormatMode.LONG 
+				? ArgumentsParser.DeferenceSymlinkMode.NEVER 
+				: ArgumentsParser.DeferenceSymlinkMode.COMMAND_LINE_SYMLINK_TO_DIR;
+		
+		ArgumentsParser.formatNeedsStat = ArgumentsParser.formatMode == ArgumentsParser.FormatMode.LONG;
 
 		CurrentDirectoryFilesManager.clear();
 		
